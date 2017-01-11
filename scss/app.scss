@@ -1,51 +1,178 @@
 @charset 'utf-8';
 
+@import '../bower_components/normalize-css/normalize.css';
 @import 'settings';
 @import 'foundation';
 @import 'motion-ui';
+@import 'material-shadows';
 
-@include foundation-global-styles;
-@include foundation-grid;
-// @include foundation-flex-grid;
+.shadow {
+  @include z-depth-classes(true, false);
+}
+
+//@include foundation-global-styles;
+//@include foundation-grid;
+//// @include foundation-flex-grid;
 @include foundation-typography;
-@include foundation-button;
-@include foundation-forms;
-// @include foundation-range-input;
-@include foundation-accordion;
-@include foundation-accordion-menu;
-@include foundation-badge;
-@include foundation-breadcrumbs;
-@include foundation-button-group;
-@include foundation-callout;
-@include foundation-card;
-@include foundation-close-button;
-@include foundation-menu;
-@include foundation-menu-icon;
-@include foundation-drilldown-menu;
-@include foundation-dropdown;
-@include foundation-dropdown-menu;
-@include foundation-responsive-embed;
-@include foundation-label;
-@include foundation-media-object;
-@include foundation-off-canvas;
-@include foundation-orbit;
-@include foundation-pagination;
-@include foundation-progress-bar;
-// @include foundation-progress-element;
-// @include foundation-meter-element;
-@include foundation-slider;
-@include foundation-sticky;
-@include foundation-reveal;
-@include foundation-switch;
-@include foundation-table;
-@include foundation-tabs;
-@include foundation-thumbnail;
-@include foundation-title-bar;
-@include foundation-tooltip;
-@include foundation-top-bar;
-@include foundation-visibility-classes;
-@include foundation-float-classes;
-// @include foundation-flex-classes;
+/// Sets the visual style of a button.
+/// @param {Color} $background [$button-background] - Background color of the button.
+/// @param {Color} $background-hover [$button-background-hover] - Background color of the button on hover. Set to `auto` to have the mixin automatically generate a hover color.
+/// @param {Color} $color [$button-color] - Text color of the button. Set to `auto` to automatically generate a color based on the background color.
+@mixin button-style(
+  $background: $button-background,
+  $background-hover: $button-background-hover,
+  $color: $button-color,
+  $background-hover-lightness: $button-background-hover-lightness
+) {
+  //@if $color == auto {
+  $color: color-pick-contrast($background, ($button-color, $button-color-alt));
+  //}
 
-@include motion-ui-transitions;
-@include motion-ui-animations;
+  //@if $background-hover == auto {
+  $background-hover: scale-color($background, $lightness: $background-hover-lightness);
+  //}
+
+  //background-color: red;
+  background-color: $background;
+  color: $color;
+  @include z-depth-2dp();
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+
+  &:hover, &:focus {
+    @include z-depth-4dp();
+    //background-color: $background-hover;
+    color: $color;
+  }
+}
+
+@mixin foundation-button {
+  .button {
+    @include button;
+
+    // Sizes
+    @each $size, $value in map-remove($button-sizes, default) {
+      &.#{$size} {
+        font-size: $value;
+      }
+    }
+
+    &.expanded {
+      @include button-expand;
+    }
+
+    // Colors
+    @each $name, $color in $button-palette {
+      @if $button-fill != hollow {
+        &.#{$name} {
+          @include button-style($color, auto, auto);
+        }
+      } @else {
+        &.#{$name} {
+          @include button-hollow-style($color);
+        }
+
+        &.#{$name}.dropdown::after {
+          border-top-color: $color;
+        }
+      }
+    }
+
+    // Hollow style
+    @if $button-fill != hollow {
+      &.hollow {
+        @include button-hollow;
+        @include button-hollow-style;
+
+        @each $name, $color in $button-palette {
+          &.#{$name} {
+            @include button-hollow-style($color);
+          }
+        }
+      }
+    }
+
+    // Disabled style
+    &.disabled,
+    &[disabled] {
+      opacity: 0.7;
+
+      //@include button-disabled;
+      //
+      //@each $name, $color in $button-palette {
+      //  &.#{$name} {
+      //    @include button-disabled($color);
+      //  }
+      //}
+    }
+
+    // Dropdown arrow
+    &.dropdown {
+      @include button-dropdown;
+
+      @if $button-fill == hollow {
+        &::after {
+          border-top-color: $button-background;
+        }
+      }
+    }
+
+    // Button with dropdown arrow only
+    &.arrow-only::after {
+      top: -0.1em;
+      float: none;
+      margin-#{$global-left}: 0;
+    }
+  }
+}
+
+@include foundation-button;
+//@include foundation-forms;
+//// @include foundation-range-input;
+//@include foundation-accordion;
+//@include foundation-accordion-menu;
+//@include foundation-badge;
+//@include foundation-breadcrumbs;
+//@include foundation-button-group;
+//@include foundation-callout;
+//@include foundation-card;
+//@include foundation-close-button;
+//@include foundation-menu;
+//@include foundation-menu-icon;
+//@include foundation-drilldown-menu;
+//@include foundation-dropdown;
+//@include foundation-dropdown-menu;
+//@include foundation-responsive-embed;
+//@include foundation-label;
+//@include foundation-media-object;
+//@include foundation-off-canvas;
+//@include foundation-orbit;
+//@include foundation-pagination;
+//@include foundation-progress-bar;
+//// @include foundation-progress-element;
+//// @include foundation-meter-element;
+//@include foundation-slider;
+//@include foundation-sticky;
+//@include foundation-reveal;
+//@include foundation-switch;
+//@include foundation-table;
+//@include foundation-tabs;
+//@include foundation-thumbnail;
+//@include foundation-title-bar;
+//@include foundation-tooltip;
+//@include foundation-top-bar;
+//@include foundation-visibility-classes;
+//@include foundation-float-classes;
+//// @include foundation-flex-classes;
+//
+//@include motion-ui-transitions;
+//@include motion-ui-animations;
+@each $name, $color in $foundation-palette {
+  .#{$name}-fg {
+    color: $color;
+    background-color: color-pick-contrast($color);
+  }
+  .#{$name}-bg {
+    background-color: $color;
+    color: color-pick-contrast($color);
+  }
+}
